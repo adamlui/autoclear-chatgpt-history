@@ -36,6 +36,6 @@ jobs:
           push_options: '--force'
           add_options: '--all'
           commit_user_name: 'auto-sync[bot]'
-          commit_message: '${{ github.event.head_commit.message }} ← `adamlui/autoclear-chatgpt-history` auto-sync'
+          commit_message: '${{ github.event.head_commit.message }} ↞ [auto-sync from `adamlui/autoclear-chatgpt-history`]'
           file_pattern: 'chatgpt/autoclear-chatgpt-history/*'
           repository: adamlui/userscripts
