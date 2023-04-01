@@ -1,4 +1,4 @@
-name: Sync greasemonkey to adamlui/userscripts/chatgpt/autoclear-chatgpt-history
+name: Sync greasemonkey to (adamlui/userscripts/chatgpt || adamlui/chatgpt-userscripts) /autoclear-chatgpt-history
 
 on:
   push:
@@ -6,10 +6,10 @@ on:
       - main
     paths:
       - 'greasemonkey/**'
-    if: 'github.event.head_commit.committer.username != "auto-sync[bot]"'
+    if: 'github.event.head_commit.committer.username != "auto-sync-bot"'
 
 jobs:
-  sync-bravegpt:
+  sync-autoclear-chatgpt-history:
     runs-on: ubuntu-latest
     steps:
 
@@ -27,16 +27,35 @@ jobs:
           repository: adamlui/userscripts
           path: adamlui/userscripts
 
+      - name: Checkout adamlui/chatgpt-userscripts
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.REPO_SYNC_PAT }}
+          repository: adamlui/chatgpt-userscripts
+          path: adamlui/chatgpt-userscripts
+
       - name: Sync adamlui/autoclear-chatgpt-history/greasemonkey to adamlui/userscripts/chatgpt/autoclear-chatgpt-history
         run: rsync -av --delete ${{ github.workspace }}/adamlui/autoclear-chatgpt-history/greasemonkey/ ${{ github.workspace }}/adamlui/userscripts/chatgpt/autoclear-chatgpt-history/
+
+      - name: Sync adamlui/autoclear-chatgpt-history/greasemonkey to adamlui/chatgpt-userscripts/autoclear-chatgpt-history
+        run: rsync -av --delete --exclude="/.*" ${{ github.workspace }}/adamlui/autoclear-chatgpt-history/greasemonkey/ ${{ github.workspace }}/adamlui/chatgpt-userscripts/autoclear-chatgpt-history/
 
       - name: Push to adamlui/userscripts
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           push_options: '--force'
           add_options: '--all'
-          commit_user_name: 'auto-sync[bot]'
           commit_user_email: auto-sync@kudoai.com
           commit_message: '${{ github.event.head_commit.message }} ↞ [auto-sync from `adamlui/autoclear-chatgpt-history`]'
           file_pattern: 'chatgpt/autoclear-chatgpt-history/*'
           repository: adamlui/userscripts
+
+      - name: Push to adamlui/chatgpt-userscripts
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          push_options: '--force'
+          add_options: '--all'
+          commit_user_email: auto-sync@kudoai.com
+          commit_message: '${{ github.event.head_commit.message }} ↞ [auto-sync from `adamlui/autoclear-chatgpt-history`]'
+          file_pattern: 'autoclear-chatgpt-history/*'
+          repository: adamlui/chatgpt-userscripts
