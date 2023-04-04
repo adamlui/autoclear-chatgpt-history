@@ -1,10 +1,10 @@
-name: Sync greasemonkey to (adamlui/userscripts/chatgpt || adamlui/chatgpt-userscripts) /autoclear-chatgpt-history
+name: Sync README.md to (greasemonkey) && (adamlui/userscripts/chatgpt || adamlui/chatgpt-userscripts) /autoclear-chatgpt-history
 
 on:
   push:
     branches: [ master, main ]
     paths:
-      - 'greasemonkey/**'
+      - 'README.md'
 
 jobs:
   build:
@@ -33,8 +33,8 @@ jobs:
           repository: adamlui/chatgpt-userscripts
           path: adamlui/chatgpt-userscripts
 
-      - name: Copy greasemonkey/README.md to root directory
-        run: cp -f ${{ github.workspace }}/adamlui/autoclear-chatgpt-history/greasemonkey/README.md ${{ github.workspace }}/adamlui/autoclear-chatgpt-history/README.md
+      - name: Copy README.md to greasemonkey directory
+        run: cp -f ${{ github.workspace }}/adamlui/autoclear-chatgpt-history/README.md ${{ github.workspace }}/adamlui/autoclear-chatgpt-history/greasemonkey/README.md
 
       - name: Sync adamlui/autoclear-chatgpt-history/greasemonkey to adamlui/userscripts/chatgpt/autoclear-chatgpt-history
         run: rsync -av --delete ${{ github.workspace }}/adamlui/autoclear-chatgpt-history/greasemonkey/ ${{ github.workspace }}/adamlui/userscripts/chatgpt/autoclear-chatgpt-history/
@@ -47,9 +47,9 @@ jobs:
         with:
           push_options: '--force'
           add_options: '--all'
-          commit_user_email: auto-sync@kudoai.com
-          commit_message: '${{ github.event.head_commit.message }} ↞ [auto-sync from `adamlui/autoclear-chatgpt-history/greasemonkey`]'
-          file_pattern: '*'
+          commit_user_email: auto-sync@adamlui.com
+          commit_message: '${{ github.event.head_commit.message }} ↞ [auto-sync from `adamlui/autoclear-chatgpt-history`]'
+          file_pattern: 'greasemonkey/*'
           repository: adamlui/autoclear-chatgpt-history
 
       - name: Push to adamlui/userscripts
@@ -57,7 +57,7 @@ jobs:
         with:
           push_options: '--force'
           add_options: '--all'
-          commit_user_email: auto-sync@kudoai.com
+          commit_user_email: auto-sync@adamlui.com
           commit_message: '${{ github.event.head_commit.message }} ↞ [auto-sync from `adamlui/autoclear-chatgpt-history`]'
           file_pattern: 'chatgpt/autoclear-chatgpt-history/*'
           repository: adamlui/userscripts
@@ -67,7 +67,7 @@ jobs:
         with:
           push_options: '--force'
           add_options: '--all'
-          commit_user_email: auto-sync@kudoai.com
+          commit_user_email: auto-sync@adamlui.com
           commit_message: '${{ github.event.head_commit.message }} ↞ [auto-sync from `adamlui/autoclear-chatgpt-history`]'
           file_pattern: 'autoclear-chatgpt-history/*'
           repository: adamlui/chatgpt-userscripts
