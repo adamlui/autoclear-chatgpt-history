@@ -287,7 +287,7 @@
                     div.innerHTML = clearSvg[div.name] + 'Clear Conversations'
                     return
                 }
-                if (div.name === 0) div.name = 1
+                if (div.name === 0) { div.innerHTML = clearSvg[div.name] + 'Clear Conversations', div.name = 1}
                 else { createOrShowClearButton('none') ; div.name = 0 ; chatgpt.clearChats() }
                 div.innerHTML = clearSvg[div.name] + 'Confirm Clear Conversations'
             })
