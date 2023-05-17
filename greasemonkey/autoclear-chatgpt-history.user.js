@@ -41,7 +41,7 @@
 // @compatible          ghost
 // @compatible          qq
 // @match               https://chat.openai.com/*
-// @run-at              document-end
+// @run-at              document-start
 // @require             https://cdn.jsdelivr.net/gh/chatgptjs/chatgpt.js@51dc48d5bff8e5539e8cee273032360d0691c6a6/dist/chatgpt-1.6.5.min.js
 // @connect             raw.githubusercontent.com
 // @grant               GM_setValue
@@ -58,11 +58,48 @@
 
 // NOTE: This script relies on the powerful chatgpt.js library @ https://chatgpt.js.org (c) 2023 Adam Lui, chatgpt.js & contributors under the MIT license.
 
-(async () => {
+var globalVariable = new Map();
 
+// Init/fill conversation map
+var fetchMap = new Map()
+fetchMap.set('conversations', {})
+fetchMap.set('/backend-api/conversations', async function (f) {
+    let json = await f.json()
+    fetchMap.set('conversations', json)
+    globalVariable.get('createOrShowClearButton')(null)
+    if (json.items.length === 0 || globalVariable.get('config').buttonHidden) globalVariable.get('createOrShowClearButton')('none')
+    else globalVariable.get('createOrShowClearButton')('')
+})
+fetchMap.set('/api/auth/session', async function (f) {
+    let json = await f.json()
+    globalVariable.set('accessToken', json.accessToken)
+})
+
+fetchHook()
+
+// Define FETCH-HOOK function
+function fetchHook() {
+    let browserWindow = document.defaultView
+    const originalFetch = browserWindow.fetch
+    globalVariable.set('Fetch', originalFetch)
+    browserWindow.fetch = function (...args) {
+        let U = args[0]
+        if (U.indexOf('http') == -1) U = 'https://' + location.host + U
+        let url = new URL(U), pathname = url.pathname, callback = fetchMap.get(pathname)
+        if (callback) {
+            (async function() {
+                callback(await originalFetch.apply(this, args))
+            })()
+        }
+        return originalFetch.apply(this, args)
+    }
+}
+
+(async () => {
     // Initialize settings
     var configKeyPrefix = 'chatGPTac_'
-    var config = { userLanguage: navigator.languages[0] || navigator.language || '' }
+    globalVariable.set('config', { userLanguage: navigator.languages[0] || navigator.language || '' })
+    var config = globalVariable.get('config')
     loadSetting('autoclear', 'toggleHidden', 'buttonHidden', 'notifHidden') ; config.isActive = config.autoclear
 
     // Define messages
@@ -113,20 +150,31 @@
             transform: translateX(14px) }`
     document.head.appendChild(switchStyle)
 
+    function clearChats() { 
+        let Token = globalVariable.get('accessToken')
+        if (!Token) {
+            alert('Token is null, please refresh the page and try again.Maybe the execution timing of the oil monkey script is set incorrectly.Please set to `document-start`!');
+            return;
+        }
+        let url = '/backend-api/conversations';
+        let method = 'PATCH';
+        let headers = {
+            Authorization: 'Bearer ' + Token,
+            'Content-Type': 'application/json'
+        };
+        let body = { is_visible: false };
+        (async () => {
+            for (let i = 0; i < 2; i++) {
+                await globalVariable.get('Fetch')(url, { method, headers, body: JSON.stringify(body) })
+            }
+            chatgpt.startNewChat()
+            // Pseudocode, should be done in chatgpt.js
+            chatgpt.hideHistory()
+        })()
+    }
+
     // Stylize clear button icons
     var clearSvg = null
-
-    // Init/fill conversation map
-    var fetchMap = new Map()
-    fetchMap.set('conversations', {})
-    fetchMap.set('/backend-api/conversations', async function(f) {
-        let json = await f.json()
-        fetchMap.set('conversations', json)
-        createOrShowClearButton(null)
-        if (json.items.length === 0 || config.buttonHidden) createOrShowClearButton('none')
-        else createOrShowClearButton('')
-    })
-    fetchHook()
 
     // Create toggle label, add listener/classes/HTML
     var toggleLabel = document.createElement('div') // create label div
@@ -137,7 +185,7 @@
         config.autoclear = toggleInput.checked
         for (var id of menuIDs) { GM_unregisterMenuCommand(id) } registerMenu() // refresh menu
         if (config.autoclear && !config.isActive) {
-            if (fetchMap.get('conversations').items.length > 0) setTimeout(chatgpt.clearChats, 250)
+            if (fetchMap.get('conversations').items.length > 0) setTimeout(clearChats, 250)
             config.isActive = true
             if (!config.notifHidden) {
                 chatgpt.notify('🕶 ' + messages.mode_autoClear + ': ON',
@@ -172,7 +220,7 @@
     var clearObserver = new MutationObserver(function(mutations) {
         mutations.forEach(function() {
             if (fetchMap.get('conversations').items.length > 0) {
-                    setTimeout(chatgpt.clearChats, 250) ; clearObserver.disconnect()
+                    setTimeout(clearChats, 250) ; clearObserver.disconnect()
     }})})
     if (config.autoclear) {
         if (!config.notifHidden && document.title === 'New chat') {
@@ -293,6 +341,8 @@
             })
         })()
     }
+    
+    globalVariable.set('createOrShowClearButton', createOrShowClearButton)
 
     async function initClearSvg() {
         return new Promise(async(resolve) => {
@@ -325,21 +375,4 @@
             }, 100)
         })
     }
-
-    // Define FETCH-HOOK function
-
-    async function fetchHook() {
-        let browserWindow = document.defaultView
-        const originalFetch = browserWindow.fetch
-        browserWindow.fetch = function(...args) {
-            (async function() {
-                let U = args[0]
-                if (U.indexOf('http') == -1) return
-                let url = new URL(U), pathname = url.pathname, callback = fetchMap.get(pathname)
-                if (callback == null) return
-                callback(await originalFetch.apply(this, args))
-            })()
-            return originalFetch.apply(this, args)
-    }}
-
 })()
