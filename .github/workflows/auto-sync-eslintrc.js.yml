@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.REPO_SYNC_PAT }}
-          repository: adamlui/chatgpt-auto-refresh
+          repository: adamlui/chatgpt-auto-continue
           path: adamlui/chatgpt-auto-continue
 
       - name: Checkout adamlui/chatgpt-auto-refresh
