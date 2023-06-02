@@ -38,9 +38,9 @@ jobs:
           shopt -s globstar
           for file in "${{ github.workspace }}/adamlui/autoclear-chatgpt-history/docs/"**/*.md; do
             relative_path=${file#"${{ github.workspace }}/adamlui/autoclear-chatgpt-history/docs/"}
-            if [ "$(stat -c %y "${{ github.workspace }}/adamlui/autoclear-chatgpt-history/docs/$relative_path")" > "$(stat -c %y "${{ github.workspace }}/adamlui/autoclear-chatgpt-history/greasemonkey/docs/$relative_path")" ]; then
+            if [ "${{ github.workspace }}/adamlui/autoclear-chatgpt-history/docs/$relative_path" -nt "${{ github.workspace }}/adamlui/autoclear-chatgpt-history/greasemonkey/docs/$relative_path" ]; then
               cp -f "${{ github.workspace }}/adamlui/autoclear-chatgpt-history/docs/$relative_path" "${{ github.workspace }}/adamlui/autoclear-chatgpt-history/greasemonkey/docs/$relative_path"
-            elif [ "$(stat -c %y "${{ github.workspace }}/adamlui/autoclear-chatgpt-history/greasemonkey/docs/$relative_path")" > "$(stat -c %y "${{ github.workspace }}/adamlui/autoclear-chatgpt-history/docs/$relative_path")" ]; then
+            elif [ "${{ github.workspace }}/adamlui/autoclear-chatgpt-history/greasemonkey/docs/$relative_path" -nt "${{ github.workspace }}/adamlui/autoclear-chatgpt-history/docs/$relative_path" ]; then
               cp -f "${{ github.workspace }}/adamlui/autoclear-chatgpt-history/greasemonkey/docs/$relative_path" "${{ github.workspace }}/adamlui/autoclear-chatgpt-history/docs/$relative_path"
             fi
           done
