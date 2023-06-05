@@ -18,7 +18,7 @@ jobs:
           token: ${{ secrets.REPO_SYNC_PAT }}
           repository: adamlui/autoclear-chatgpt-history
           path: adamlui/autoclear-chatgpt-history          
-          fetch-depth: 1
+          fetch-depth: 2
 
       - name: Checkout adamlui/chatgpt-apps
         uses: actions/checkout@v2
