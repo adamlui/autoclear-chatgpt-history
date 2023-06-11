@@ -41,7 +41,7 @@
 // @compatible          ghost
 // @compatible          qq
 // @match               https://chat.openai.com/*
-// @run-at              document-end
+// @run-at              document-start
 // @require             https://cdn.jsdelivr.net/gh/chatgptjs/chatgpt.js@f855a11607839fbc55273db604d167b503434598/dist/chatgpt-1.9.1.min.js
 // @connect             raw.githubusercontent.com
 // @connect             greasyfork.org
@@ -59,11 +59,39 @@
 
 // NOTE: This script relies on the powerful chatgpt.js library @ https://chatgpt.js.org (c) 2023 KudoAI & contributors under the MIT license.
 var globalVariable = new Map();
-
-(async () => {
+// Init/fill conversation map
+var funMap = new Map();
+var fetchMap = new Map()
+fetchMap.set('conversations', {})
+fetchMap.set('/backend-api/conversations', async function(f) {
+    let json = await f.json()
+    fetchMap.set('conversations', json)
+    funMap.get('createOrShowClearButton')(null)
+    if (json.items.length === 0 || funMap.get('config').buttonHidden) funMap.get('createOrShowClearButton')('none')
+    else funMap.get('createOrShowClearButton')('')
+}); 
+// Define FETCH-HOOK function
+function fetchHook() {
+    let browserWindow = document.defaultView
+    const originalFetch = browserWindow.fetch
+    browserWindow.fetch = function(...args) {
+        (async function() {
+            let U = args[0]
+            if (U.indexOf('http') == -1) return
+            let url = new URL(U), pathname = url.pathname, callback = fetchMap.get(pathname)
+            if (callback == null) return
+            callback(await originalFetch.apply(this, args))
+        })()
+        return originalFetch.apply(this, args)
+    }
+}
+fetchHook();
+    
+(async () =>{
     // Initialize settings
     var configPrefix = 'chatGPTac_'
-    var config = { userLanguage: navigator.languages[0] || navigator.language || '' }
+    funMap.set('config', { userLanguage: navigator.languages[0] || navigator.language || '' });
+    var config = funMap.get('config');
     loadSetting('autoclear', 'toggleHidden', 'buttonHidden', 'notifHidden') ; config.isActive = config.autoclear
 
     // Define messages
@@ -115,17 +143,6 @@ var globalVariable = new Map();
 
     // Stylize clear button icons
     var clearSvg = null
-
-    // Init/fill conversation map
-    var fetchMap = new Map()
-    fetchMap.set('conversations', {})
-    fetchMap.set('/backend-api/conversations', async function(f) {
-        let json = await f.json()
-        fetchMap.set('conversations', json)
-        createOrShowClearButton(null)
-        if (json.items.length === 0 || config.buttonHidden) createOrShowClearButton('none')
-        else createOrShowClearButton('')
-    }) ; fetchHook()
 
     // Create toggle label, add listener/max-height/classes/HTML
     var toggleLabel = document.createElement('div') // create label div
@@ -296,6 +313,8 @@ var globalVariable = new Map();
         })()
     }
 
+    funMap.set('createOrShowClearButton', createOrShowClearButton);
+
     async function initClearSvg() {
         return new Promise(async(resolve) => {
             let Svg = GM_getValue('clearSvg', [])
@@ -335,21 +354,4 @@ var globalVariable = new Map();
             }, 100)
         })
     }
-
-    // Define FETCH-HOOK function
-
-    async function fetchHook() {
-        let browserWindow = document.defaultView
-        const originalFetch = browserWindow.fetch
-        browserWindow.fetch = function(...args) {
-            (async function() {
-                let U = args[0]
-                if (U.indexOf('http') == -1) return
-                let url = new URL(U), pathname = url.pathname, callback = fetchMap.get(pathname)
-                if (callback == null) return
-                callback(await originalFetch.apply(this, args))
-            })()
-            return originalFetch.apply(this, args)
-    }}
-
 })()
