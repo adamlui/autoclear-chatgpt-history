@@ -52,10 +52,16 @@ jobs:
           done
 
       - name: Sync / to adamlui/chatgpt-apps/autoclear-chatgpt-history/
-        run: rsync -avhr --exclude={'.*','package*json'} ${{ github.workspace }}/adamlui/autoclear-chatgpt-history/ ${{ github.workspace }}/adamlui/chatgpt-apps/autoclear-chatgpt-history/
+        run: |
+          rsync -avhr --exclude={'.*','package*json'} \
+            ${{ github.workspace }}/adamlui/autoclear-chatgpt-history/ \
+            ${{ github.workspace }}/adamlui/chatgpt-apps/autoclear-chatgpt-history/
 
       - name: Sync /greasemonkey/ to adamlui/userscripts/chatgpt/autoclear-chatgpt-history/
-        run: rsync -avhr --delete ${{ github.workspace }}/adamlui/autoclear-chatgpt-history/greasemonkey/ ${{ github.workspace }}/adamlui/userscripts/chatgpt/autoclear-chatgpt-history/
+        run: |
+          rsync -avhr --delete \
+            ${{ github.workspace }}/adamlui/autoclear-chatgpt-history/greasemonkey/ \
+            ${{ github.workspace }}/adamlui/userscripts/chatgpt/autoclear-chatgpt-history/
 
       - name: Push to adamlui/autoclear-chatgpt-history
         uses: stefanzweifel/git-auto-commit-action@v4
