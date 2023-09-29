@@ -53,7 +53,7 @@ jobs:
 
       - name: Sync / to adamlui/chatgpt-apps/autoclear-chatgpt-history/
         run: |
-          rsync -avhr --exclude={'.*','package*json'} \
+          rsync -avhr --delete --exclude={'.*','package*json'} \
             ${{ github.workspace }}/adamlui/autoclear-chatgpt-history/ \
             ${{ github.workspace }}/adamlui/chatgpt-apps/autoclear-chatgpt-history/
 
