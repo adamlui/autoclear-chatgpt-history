@@ -3,7 +3,7 @@ name: Sync (/ to adamlui/chatgpt-apps/autoclear-chatgpt-history/) && (/greasemon
 on:
   push:
     branches: main
-    paths: '**'
+    paths: "**"
 
 jobs:
   build:
@@ -73,8 +73,8 @@ jobs:
           push_options: --force
           add_options: --all
           commit_user_email: auto-sync@kudoai.com
-          commit_message: '${{ github.event.head_commit.message }} ↞ [auto-sync from `adamlui/autoclear-chatgpt-history`]'
-          file_pattern: '**'
+          commit_message: "${{ github.event.head_commit.message }} ↞ [auto-sync from `adamlui/autoclear-chatgpt-history`]"
+          file_pattern: "**"
           repository: adamlui/autoclear-chatgpt-history
 
       - name: Push to adamlui/chatgpt-apps
@@ -83,16 +83,16 @@ jobs:
           push_options: --force
           add_options: --all
           commit_user_email: auto-sync@kudoai.com
-          commit_message: '${{ github.event.head_commit.message }} ↞ [auto-sync from `adamlui/autoclear-chatgpt-history`]'
-          file_pattern: 'autoclear-chatgpt-history/**'
+          commit_message: "${{ github.event.head_commit.message }} ↞ [auto-sync from `adamlui/autoclear-chatgpt-history`]"
+          file_pattern: "autoclear-chatgpt-history/**"
           repository: adamlui/chatgpt-apps
 
       - name: Push to adamlui/userscripts
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          push_options: '--force'
-          add_options: '--all'
+          push_options: --force
+          add_options: --all
           commit_user_email: auto-sync@kudoai.com
-          commit_message: '${{ github.event.head_commit.message }} ↞ [auto-sync from `adamlui/autoclear-chatgpt-history`]'
-          file_pattern: 'chatgpt/autoclear-chatgpt-history/**'
+          commit_message: "${{ github.event.head_commit.message }} ↞ [auto-sync from `adamlui/autoclear-chatgpt-history`]"
+          file_pattern: "chatgpt/autoclear-chatgpt-history/**"
           repository: adamlui/userscripts
