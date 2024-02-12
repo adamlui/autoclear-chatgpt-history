@@ -43,17 +43,17 @@ jobs:
             relative_path=${file#"docs/"}
 
             for prefix in "${loc_prefixes[@]}" ; do
-              eval "${prefix}_doc_path=\"\$([[ \$prefix == \"gm\" ]] && echo \"greasemonkey/\" || echo \"\")docs/$relative_path\""
+              eval "${prefix}_doc_path=\"\$([[ \$prefix == \"gm\" ]] && echo \"greasemonkey/\" || echo \"\")docs/${file#"docs/"}\""
               eval "${prefix}_doc_content=\$(git show HEAD:\"\$${prefix}_doc_path\")"
               eval "${prefix}_doc_modified=\$(git log -1 --format=\"%ct\" -- \"\$${prefix}_doc_path\")"
             done
 
             echo "root_doc_path is $root_doc_path"
-            echo "root_doc_content is $root_doc_content"
-            echo "root_doc_modified is $root_doc_modified"
+            # echo "root_doc_content is $root_doc_content"
+            # echo "root_doc_modified is $root_doc_modified"
             echo "gm_doc_path is $gm_doc_path"
-            echo "gm_doc_content is $gm_doc_content"
-            echo "gm_doc_modified is $gm_doc_modified"
+            # echo "gm_doc_content is $gm_doc_content"
+            # echo "gm_doc_modified is $gm_doc_modified"
             
             # root_doc_path="docs/$relative_path"
             # root_doc_content=$(git show HEAD:"$root_doc")
