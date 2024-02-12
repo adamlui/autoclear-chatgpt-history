@@ -42,7 +42,7 @@ jobs:
             relative_path=${file#"docs/"}
 
             for prefix in "root" "gm" ; do
-              eval "${prefix}_doc=\"$(($prefix == 'gm' ? 'greasemonkey/' : ''))docs/$relative_path\""
+              eval "${prefix}_doc=\"\$(if [[ \$prefix == 'gm' ]]; then echo 'greasemonkey/'; else echo ''; fi)docs/$relative_path\""
               eval "${prefix}_doc_content=\$(git show HEAD:\"$prefix_doc\")"
               eval "${prefix}_doc_modified=\$(git log -1 --format=\"%ct\" -- \"$prefix_doc\")"
             done
@@ -64,18 +64,6 @@ jobs:
           
           # Store sync src for commit msg in self-push step
           echo "sync_src=$sync_src" >> $GITHUB_OUTPUT
-
-      - name: Sync / to adamlui/chatgpt-apps/autoclear-chatgpt-history/
-        run: |
-          rsync -avhr --delete --exclude={'.*','package*json'} \
-            ${{ github.workspace }}/adamlui/autoclear-chatgpt-history/ \
-            ${{ github.workspace }}/adamlui/chatgpt-apps/autoclear-chatgpt-history/
-
-      - name: Sync /greasemonkey/ to adamlui/userscripts/chatgpt/autoclear-chatgpt-history/
-        run: |
-          rsync -avhr --delete \
-            ${{ github.workspace }}/adamlui/autoclear-chatgpt-history/greasemonkey/ \
-            ${{ github.workspace }}/adamlui/userscripts/chatgpt/autoclear-chatgpt-history/
 
       - name: Push to adamlui/autoclear-chatgpt-history
         uses: stefanzweifel/git-auto-commit-action@v4
