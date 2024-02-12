@@ -42,7 +42,7 @@ jobs:
             relative_path=${file#"docs/"}
 
             for prefix in "root" "gm" ; do
-              eval "${prefix}_doc=\"\$(if [[ \$prefix == \"gm\" ]]; then echo \"greasemonkey/\"; fi)docs/$relative_path\""
+              eval "${prefix}_doc=\"\$([[ \$prefix == \"gm\" ]] && echo \"greasemonkey/\" || echo \".\")docs/$relative_path\""
               eval "${prefix}_doc_content=\$(git show HEAD:\"$prefix_doc\")"
               eval "${prefix}_doc_modified=\$(git log -1 --format=\"%ct\" -- \"$prefix_doc\")"
             done
