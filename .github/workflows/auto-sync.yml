@@ -41,10 +41,10 @@ jobs:
           for file in docs/**/*.md ; do
             relative_path=${file#"docs/"}
 
-            for prefix in {"root","gm"} ; do
-              eval "${prefix}_doc_path=\"\$([[ \$prefix == \"gm\" ]] && echo \"greasemonkey/\" || echo \"\")docs/$relative_path\""
-              eval "${prefix}_doc_content=\$(git show HEAD:\"\$${prefix}_doc\")"
-              eval "${prefix}_doc_modified=\$(git log -1 --format=\"%ct\" -- \"\$${prefix}_doc\")"
+            for loc in {"root","gm"} ; do
+              eval "${loc}_doc_path=\"\$([[ \$loc == \"gm\" ]] && echo \"greasemonkey/\" || echo \"\")docs/$relative_path\""
+              eval "${loc}_doc_content=\$(git show HEAD:\"\$${loc}_doc\")"
+              eval "${loc}_doc_modified=\$(git log -1 --format=\"\%ct\" -- \"\$${loc}_doc\")"
             done
 
             echo "root_doc_modified is $root_doc_modified"
