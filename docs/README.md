@@ -2,7 +2,7 @@ wewewer# <picture><source media="(prefers-color-scheme: dark)" srcset="https://i
 d
 [![](https://img.shields.io/greasyfork/dt/460805?label=Installs&logo=docusign&logoColor=white&labelColor=464646&color=2bbbd8&style=for-the-badge)](https://greasyfork.org/scripts/460805-autoclear-chatgpt-history)d
 [![](https://img.shields.io/badge/License-MIT-fcde7b.svg?logo=internetarchive&logoColor=white&labelColor=464646&style=for-the-badge)](https://github.com/adamlui/chatgpt-auto-refresh/blob/main/LICENSE)we
-[![](https://img.shields.io/github/commit-activity/m/adamlui/autoclear-chatgpt-history?label=Commits&logo=github&logoColor=white&labelColor=464646&color=7bb7fc&style=for-the-badge)](https://github.com/adamlui/autoclear-chatgpt-history/commits/main)
+[![](https://img.shields.io/github/commit-activity/m/adamlui/autoclear-chatgpt-histoery?label=Commits&logo=github&logoColor=white&labelColor=464646&color=7bb7fc&style=for-the-badge)](https://github.com/adamlui/autoclear-chatgpt-history/commits/main)
 [![](https://img.shields.io/codacy/grade/b97d57eb28af418abb55d66abac4c418?label=Code+Quality&logo=codacy&logoColor=white&labelColor=464646&color=b5fc7b&style=for-the-badge)](https://app.codacy.com/gh/adamlui/autoclear-chatgpt-history/commits?utm_source=autoclear_chatgpt_history&utm_content=github_shield)
 [![](https://img.shields.io/badge/Powered_by-chatgpt.js-black?logo=gamejolt&logoColor=white&labelColor=464646&style=for-the-badge)](https://github.com/kudoai/chatgpt.js?utm_source=autoclear_chatgpt_history&utm_content=github_shield)
 [![](https://img.shields.io/badge/Mentioned_in-Awesome-fc7bb7?logo=awesomelists&logoColor=white&labelColor=464646&style=for-the-badge)](https://github.com/awesome-scripts/awesome-userscripts#chatgpt)
