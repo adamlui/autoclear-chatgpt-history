@@ -92,9 +92,3 @@ jobs:
           commit_message: "${{ github.event.head_commit.message }} ↞ [auto-sync from `${{ steps.sync_docs.outputs.sync_src }}`]"
           file_pattern: "**"
           repository: adamlui/autoclear-chatgpt-history
-
-          add_options: --all
-          commit_user_email: auto-sync@kudoai.com
-          commit_message: "${{ github.event.head_commit.message }} ↞ [auto-sync from `adamlui/autoclear-chatgpt-history`]"
-          file_pattern: "chatgpt/autoclear-chatgpt-history/**"
-          repository: adamlui/userscripts
