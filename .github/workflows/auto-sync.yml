@@ -41,7 +41,8 @@ jobs:
           for file in docs/**/*.md ; do
             relative_path=${file#"docs/"}
 
-            for prefix in "root" "gm" ; do
+            for prefix in ("root" "gm") ; do
+              echo prefix
               eval "${prefix}_doc=\"docs/\$relative_path\""
               eval "${prefix}_doc_content=\$(git show HEAD:\"$prefix_doc\")"
               eval "${prefix}_doc_modified=\$(git log -1 --format=\"%ct\" -- \"$prefix_doc\")"
