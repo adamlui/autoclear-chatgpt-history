@@ -61,10 +61,10 @@ jobs:
             done
             if (( root_doc_modified > gm_doc_modified )) ; then
               if [[ "$root_doc_content" != "$gm_doc_content" ]] ; then
-                cp -f "$root_doc_path" "$gm_doc_path" ; sync_src="root" ; echo "root doc copied to gm" ; fi
+                cp -f "$root_doc_path" "$gm_doc_path" ; sync_src="root" ; fi
             elif (( gm_doc_modified > root_doc_modified )) ; then
               if [[ "$gm_doc_content" != "$root_doc_content" ]] ; then
-                cp -f "$gm_doc_path" "$root_doc_path" ; sync_src="greasemonkey" ; echo "gm doc copied to root" ; fi ; fi
+                cp -f "$gm_doc_path" "$root_doc_path" ; sync_src="greasemonkey" ; fi ; fi
           done
 
           # Store sync src for commit msg in self-push step
