@@ -9,7 +9,7 @@
     </h6>
 </div>
 
-# 🏛️ MIT www
+# 🏛️ MIT ttt
 
 **Copyright (c) 2023–2024 [Adam Lui](https://github.com/adamlui) & [contributors](.#-contributors)**
 
