@@ -44,7 +44,7 @@ jobs:
             for loc in {"root","gm"} ; do
               eval "${loc}_doc_path=\"\$([[ \$loc == \"gm\" ]] && echo \"greasemonkey/\" || echo \"\")docs/$relative_path\""
               eval "${loc}_doc_content=\$(git show HEAD:\"\$${loc}_doc\")"
-              eval "${loc}_doc_modified=\$(git log -1 --format=\"\%ct\" -- \"\$${loc}_doc\")"
+              eval "${loc}_doc_modified=\$(git log -1 --format=\"%ct\" -- \"\$${loc}_doc_path\")"
             done
 
             echo "root_doc_modified is $root_doc_modified"
