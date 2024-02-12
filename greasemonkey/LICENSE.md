@@ -1,4 +1,4 @@
-<div align="right">
+eee<div align="right">
     <h6>
         <picture>
             <source type="image/svg+xml" media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/KudoAI/chatgpt.js/main/media/images/icons/earth-americas-white-icon32.svg">
@@ -9,7 +9,7 @@
     </h6>
 </div>
 
-# 🏛️ MIT www
+# 🏛️ MIT ttt
 
 **Copyright (c) 2023–2024 [Adam Lui](https://github.com/adamlui) & [contributors](.#-contributors)**
 
