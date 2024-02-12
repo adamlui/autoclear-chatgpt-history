@@ -44,7 +44,7 @@ jobs:
 
             for prefix in "${loc_prefixes[@]}" ; do
               eval "${prefix}_doc_path=\"\$([[ \$prefix == \"gm\" ]] && echo \"greasemonkey/\" || echo \"\")docs/$relative_path\""
-              eval "${prefix}_doc_content=\$(git show HEAD:\"\$${prefix}_doc\")"
+              eval "${prefix}_doc_content=\$(git show HEAD:\"\$${prefix}_doc_path\")"
               eval "${prefix}_doc_modified=\$(git log -1 --format=\"%ct\" -- \"\$${prefix}_doc_path\")"
             done
 
