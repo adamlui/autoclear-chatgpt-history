@@ -27,10 +27,16 @@ jobs:
           loc_prefixes=( "root" "gm" )
 
           # Sync LICENSE.md
-          root_license_content=$(git show HEAD:"LICENSE.md")
-          root_license_modified=$(git log -1 --format="%ct" -- "LICENSE.md")
-          gm_license_content=$(git show HEAD:"greasemonkey/LICENSE.md")
-          gm_license_modified=$(git log -1 --format="%ct" -- "greasemonkey/LICENSE.md")
+          for prefix in "${loc_prefixes[@]}" ; do
+            eval "${prefix}_license_content=\$(git show HEAD:\"\$([[ \$prefix == \"gm\" ]] && echo \"greasemonkey/\" || echo \"\"LICENSE.md\")"
+            eval "${prefix}_license_modified=\$(git log -1 --format=\"%ct\" -- \"\$([[ \$prefix == \"gm\" ]] && echo \"greasemonkey/\" || echo \"\"LICENSE.md\")"
+          done
+
+          # root_license_content=$(git show HEAD:"LICENSE.md")
+          # root_license_modified=$(git log -1 --format="%ct" -- "LICENSE.md")
+          # gm_license_content=$(git show HEAD:"greasemonkey/LICENSE.md")
+          # gm_license_modified=$(git log -1 --format="%ct" -- "greasemonkey/LICENSE.md")
+
           if (( root_license_modified > gm_license_modified )) ; then
             if [[ "$root_license_content" != "$gm_license_content" ]] ; then
               cp -f "LICENSE.md" "greasemonkey/LICENSE.md" ; sync_src="root" ; echo "root license copied to gm" ; fi
@@ -39,30 +45,12 @@ jobs:
               cp -f "greasemonkey/LICENSE.md" "LICENSE.md" ; sync_src="greasemonkey" ; echo "gm license copied to root" ; fi ; fi
 
           # Sync other docs
-          for file in docs/**/*.md ; do
-            relative_path=${file#"docs/"}
-
+          for file in **/*.md ; do
             for prefix in "${loc_prefixes[@]}" ; do
               eval "${prefix}_doc_path=\"\$([[ \$prefix == \"gm\" ]] && echo \"greasemonkey/\" || echo \"\")docs/${file#"docs/"}\""
               eval "${prefix}_doc_content=\$(git show HEAD:\"\$${prefix}_doc_path\")"
               eval "${prefix}_doc_modified=\$(git log -1 --format=\"%ct\" -- \"\$${prefix}_doc_path\")"
             done
-
-            echo "root_doc_path is $root_doc_path"
-            # echo "root_doc_content is $root_doc_content"
-            # echo "root_doc_modified is $root_doc_modified"
-            echo "gm_doc_path is $gm_doc_path"
-            # echo "gm_doc_content is $gm_doc_content"
-            # echo "gm_doc_modified is $gm_doc_modified"
-            
-            # root_doc_path="docs/$relative_path"
-            # root_doc_content=$(git show HEAD:"$root_doc")
-            # root_doc_modified=$(git log -1 --format="%ct" -- "$root_doc")
-            
-            # gm_doc_path="greasemonkey/docs/$relative_path"
-            # gm_doc_content=$(git show HEAD:"$gm_doc")
-            # gm_doc_modified=$(git log -1 --format="%ct" -- "$gm_doc")
-            
             if (( root_doc_modified > gm_doc_modified )) ; then
               if [[ "$root_doc_content" != "$gm_doc_content" ]] ; then
                 cp -f "$root_doc_path" "$gm_doc_path" ; sync_src="root" ; echo "root doc copied to gm" ; fi
@@ -70,7 +58,7 @@ jobs:
               if [[ "$gm_doc_content" != "$root_doc_content" ]] ; then
                 cp -f "$gm_doc_path" "$root_doc_path" ; sync_src="greasemonkey" ; echo "gm doc copied to root" ; fi ; fi
           done
-          
+
           # Store sync src for commit msg in self-push step
           echo "sync_src=$sync_src" >> $GITHUB_OUTPUT
 
