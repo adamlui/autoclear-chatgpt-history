@@ -45,7 +45,7 @@ jobs:
               cp -f "greasemonkey/LICENSE.md" "LICENSE.md" ; sync_src="greasemonkey" ; echo "gm license copied to root" ; fi ; fi
 
           # Sync other docs
-          for file in **/docs/*.md ; do
+          for file in docs/**/*.md ; do
             for prefix in "${loc_prefixes[@]}" ; do
               eval "${prefix}_doc_path=\"\$([[ \$prefix == \"gm\" ]] && echo \"greasemonkey/\" || echo \"\")docs/${file#"docs/"}\""
               eval "${prefix}_doc_content=\$(git show HEAD:\"\$${prefix}_doc_path\")"
