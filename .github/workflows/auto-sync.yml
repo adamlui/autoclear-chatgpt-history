@@ -42,11 +42,18 @@ jobs:
             relative_path=${file#"docs/"}
 
             for prefix in {"root","gm"} ; do
-              echo prefix
+              echo "prefix is $prefix"
               eval "${prefix}_doc=\"docs/\$relative_path\""
               eval "${prefix}_doc_content=\$(git show HEAD:\"$prefix_doc\")"
               eval "${prefix}_doc_modified=\$(git log -1 --format=\"%ct\" -- \"$prefix_doc\")"
             done
+
+            echo "root_doc is $root_doc"
+            echo "root_doc_content is $root_doc_content"
+            echo "root_doc_modified is $root_doc_modified"
+            echo "gm_doc is $gm_doc"
+            echo "gm_doc_content is $gm_doc_content"
+            echo "gm_doc_modified is $gm_doc_modified"
             
             # root_doc="docs/$relative_path"
             # root_doc_content=$(git show HEAD:"$root_doc")
