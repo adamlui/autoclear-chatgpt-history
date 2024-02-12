@@ -34,15 +34,16 @@ jobs:
           path: adamlui/userscripts
 
       - name: Sync docs between root & /greasemonkey
+        id: sync_docs
         run: |
           shopt -s globstar
           cd ${{ github.workspace }}/adamlui/autoclear-chatgpt-history
 
-          # Sync license.md
+          # Sync LICENSE.md
           root_license_modified=$(git log -1 --format="%ct" -- "LICENSE.md")
           gm_license_modified=$(git log -1 --format="%ct" -- "greasemonkey/LICENSE.md")
-          if (( root_license_modified > gm_license_modified )) ; then cp -f "LICENSE.md" "greasemonkey/LICENSE.md"
-          elif (( gm_license_modified > root_license_modified )) ; then cp -f "greasemonkey/LICENSE.md" "LICENSE.md" ; fi
+          if (( root_license_modified > gm_license_modified )) ; then cp -f "LICENSE.md" "greasemonkey/LICENSE.md" ; sync_src="root"
+          elif (( gm_license_modified > root_license_modified )) ; then cp -f "greasemonkey/LICENSE.md" "LICENSE.md" ; sync_src="greasemonkey" ; fi
 
           # Sync other docs
           for file in docs/**/*.md ; do
@@ -51,9 +52,12 @@ jobs:
             root_doc_modified=$(git log -1 --format="%ct" -- "$root_doc")
             gm_doc="greasemonkey/docs/$relative_path"
             gm_doc_modified=$(git log -1 --format="%ct" -- "$gm_doc")
-            if (( root_doc_modified > gm_doc_modified )) ; then cp -f "$root_doc" "$gm_doc"
-            elif (( gm_doc_modified > root_doc_modified )) ; then cp -f "$gm_doc" "$root_doc" ; fi
+            if (( root_doc_modified > gm_doc_modified )) ; then cp -f "$root_doc" "$gm_doc" ; sync_src="root"
+            elif (( gm_doc_modified > root_doc_modified )) ; then cp -f "$gm_doc" "$root_doc" ; fi ; sync_src="greasemonkey"
           done
+
+          # Store sync src for commit msg in self-push step
+          echo "sync_src=$sync_src" >> $GITHUB_OUTPUT
 
       - name: Sync / to adamlui/chatgpt-apps/autoclear-chatgpt-history/
         run: |
@@ -73,7 +77,7 @@ jobs:
           push_options: --force
           add_options: --all
           commit_user_email: auto-sync@kudoai.com
-          commit_message: "${{ github.event.head_commit.message }} ↞ [auto-sync from `adamlui/autoclear-chatgpt-history`]"
+          commit_message: "${{ github.event.head_commit.message }} ↞ [auto-sync from `${{ steps.sync_docs.outputs.sync_src }}`]"
           file_pattern: "**"
           repository: adamlui/autoclear-chatgpt-history
 
