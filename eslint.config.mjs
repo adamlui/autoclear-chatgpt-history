@@ -5,7 +5,7 @@ import eslintPluginJsonSchemaValidator from 'eslint-plugin-json-schema-validator
 export default [
     js.configs.recommended,
     {
-        ignores: ['node_modules/*'],
+        ignores: ['**/node_modules/*'],
         rules: {
             'indent': 'off', 'no-unexpected-multiline': 'off', // allow whitespace anywhere
             'quotes': ['error', 'single'], // enforce single quotes for string literals
