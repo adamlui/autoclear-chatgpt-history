@@ -5,7 +5,6 @@ import eslintPluginJsonSchemaValidator from 'eslint-plugin-json-schema-validator
 export default [
     js.configs.recommended,
     {
-        ignores: ['**/node_modules/*'],
         rules: {
             'indent': 'off', 'no-unexpected-multiline': 'off', // allow whitespace anywhere
             'quotes': ['error', 'single'], // enforce single quotes for string literals
@@ -16,7 +15,8 @@ export default [
             'no-empty': 'off', // allow empty blocks
             'no-inner-declarations': 'off', // allow function declarations anywhere
             'no-useless-escape': 'off', // allow all escape chars cause ESLint sucks at detecting truly useless ones
-            'no-unused-vars': ['error', { 'caughtErrors': 'none' }] // allow unused named args in catch blocks
+            'no-unused-vars': ['error', { 'caughtErrors': 'none' }], // allow unused named args in catch blocks
+            'constructor-super': 'off' // does not work in GitHub Actions (structuredClone is not defined)
         },
         languageOptions: {
             ecmaVersion: 2022, sourceType: 'script',
