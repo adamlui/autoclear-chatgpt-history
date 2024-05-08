@@ -124,7 +124,7 @@
 // @description:bs      Automatski briše istoriju chata prilikom posjete chatgpt.com
 // @description:ca      S'elimina automàticament l'historial de xats en visitar chatgpt.com
 // @description:ceb     Automatic gidut-ana sa kasaysayan sa chat sa pagbisita sa chatgpt.com
-// @description:ckb     دهستکاریکردنی مێژووی گفتوگۆکان خۆکارانه بۆ سەردانی chatgpt.com
+// @description:ckb     ده‌ستکاریکردنی مێژووی گفتوگۆکان خۆکارانه بۆ سەردانی chatgpt.com
 // @description:cs      Automaticky vymaže historii chatu při návštěvě chatgpt.com
 // @description:cy      Mae'n glirio hanes sgwrs yn awtomatig wrth ymweld â chatgpt.com
 // @description:da      Renser automatisk chatloggen ved besøg på chatgpt.com
@@ -225,7 +225,7 @@
 // @description:zu      Ziba itshala lokucabanga okuzoshintshwa ngokuzenzakalelayo uma ukubuka chatgpt.com
 // @author              Adam Lui
 // @namespace           https://github.com/adamlui
-// @version             2024.5.8.2
+// @version             2024.5.7.1
 // @license             MIT
 // @icon                https://cdn.jsdelivr.net/gh/adamlui/userscripts/chatgpt/media/icons/openai-favicon48.png
 // @icon64              https://cdn.jsdelivr.net/gh/adamlui/userscripts/chatgpt/media/icons/openai-favicon64.png
@@ -257,17 +257,16 @@
 // @supportURL          https://github.com/adamlui/autoclear-chatgpt-history/issues
 // ==/UserScript==
 
-// Documentation: https://docs.autoclearchatgpt.com
-// NOTE: This script relies on the powerful chatgpt.js library @ https://chatgpt.js.org © 2023–2024 KudoAI & contributors under the MIT license.
+// NOTE: This script relies on the powerful chatgpt.js library @ https://chatgpt.js.org (c) 2023–2024 KudoAI & contributors under the MIT license.
 
 (async () => {
 
     // Init CONFIG
     const config = {
-        appName: 'Autoclear ChatGPT History', appSymbol: '🕶️',
-        keyPrefix: 'autoclearChatGPThistory', userLanguage: chatgpt.getUserLanguage(),
+        appName: 'Autoclear ChatGPT History', appSymbol: '🕶️', userLanguage: chatgpt.getUserLanguage(),
         gitHubURL: 'https://github.com/adamlui/autoclear-chatgpt-history',
         greasyForkURL: 'https://greasyfork.org/scripts/460805-autoclear-chatgpt-history' }
+    config.keyPrefix = toCamelCase(config.appName)
     config.updateURL = config.greasyForkURL.replace('https://', 'https://update.')
         .replace(/(\d+)-?([a-zA-Z-]*)$/, (_, id, name) => `${ id }/${ !name ? 'script' : name }.meta.js`)
     config.supportURL = config.gitHubURL + '/issues/new'
@@ -379,6 +378,28 @@
     function saveSetting(key, value) { GM_setValue(config.keyPrefix + '_' + key, value) ; config[key] = value }
     function safeWindowOpen(url) { window.open(url, '_blank', 'noopener') } // to prevent backdoor vulnerabilities
     function getUserscriptManager() { try { return GM_info.scriptHandler } catch (err) { return 'other' }}
+
+    function toCamelCase(str) { // for `config.keyPrefix` derived from `config.appName`
+        let lastLetterWasUpper = false, isFirstWord = true
+        return str.replace(/-/g, ' ') // remove hyphens
+            .split(' ').flatMap(word => { // split input into words/acronyms for individual processing
+                if (/[A-Z]{2,}/.test(word) && word != word.toUpperCase()) { // word contains acronym
+                    if (/^[A-Z][a-z]/.test(word)) // word starts w/ title-cased non-acronym
+                        word = word.charAt(0).toLowerCase() + word.slice(1) // lower-case it
+                    return word.replace(/([a-z]+)([A-Z]+)/g, '$1 $2') // separate words from following acronyms
+                               .replace(/([A-Z]+)([a-z]+)/g, '$1 $2') // separate acronyms from following words
+                               .split(' ') // split for individual processing
+                } else return word // non-acronym
+            }).map(word => { // convert each word/acronym's case
+                const isFullAcronym = word.toUpperCase() == word
+                const result = isFullAcronym
+                    ? ( lastLetterWasUpper || isFirstWord ) ? word.toLowerCase() : word // alternate acronym case
+                    : ( lastLetterWasUpper || isFirstWord ) // alternate non-acronym case
+                        ? word.toLowerCase() : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                isFirstWord = false ; lastLetterWasUpper = isFullAcronym ? (result == word && !isFirstWord) : false
+                return result
+            }).join('') // combine to form camel case
+    }
 
     // Define MENU functions
 
