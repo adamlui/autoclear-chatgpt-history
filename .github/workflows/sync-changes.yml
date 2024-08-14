@@ -86,7 +86,7 @@ jobs:
         env:
           COMMIT_MSG: ${{ github.event.head_commit.message }}
         run: |
-          echo "ESCAPED_MSG=$(echo \"$COMMIT_MSG\" | sed 's/`/\\`/g')" >> $GITHUB_ENV
+          echo "ESCAPED_MSG=$(echo "$COMMIT_MSG" | sed 's/`/\`/g')" >> $GITHUB_ENV
 
       - name: Push changes to adamlui/autoclear-chatgpt-history
         run: |
