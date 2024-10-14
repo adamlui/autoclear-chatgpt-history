@@ -1,4 +1,4 @@
-name: Sync * to adamlui/ai-apps/autoclear-chatgpt-history/ && greasemonkey/* to adamlui/userscripts/chatgpt/autoclear-chatgpt-history/
+name: Sync ** to adamlui/ai-apps/autoclear-chatgpt-history/, then greasemonkey/ to adamlui/userscripts/chatgpt/autoclear-chatgpt-history/
 
 on:
   push:
@@ -36,7 +36,7 @@ jobs:
           repository: adamlui/userscripts
           path: adamlui/userscripts
 
-      - name: Sync docs between root & /greasemonkey
+      - name: Sync docs between root & greasemonkey/
         id: sync_docs
         run: |
           shopt -s globstar
@@ -73,13 +73,13 @@ jobs:
           # Store sync src for commit msg in self-push step
           echo "sync_src=$sync_src" >> $GITHUB_OUTPUT
 
-      - name: Sync / to adamlui/ai-apps/autoclear-chatgpt-history/
+      - name: Sync ** to adamlui/ai-apps/autoclear-chatgpt-history/
         run: |
           rsync -avhr --delete --exclude={'.*','eslint*','package*json'} \
             ${{ github.workspace }}/adamlui/autoclear-chatgpt-history/ \
             ${{ github.workspace }}/adamlui/ai-apps/autoclear-chatgpt-history/
 
-      - name: Sync /greasemonkey/ to adamlui/userscripts/chatgpt/autoclear-chatgpt-history/
+      - name: Sync greasemonkey/ to adamlui/userscripts/chatgpt/autoclear-chatgpt-history/
         run: |
           rsync -avhr --delete \
             ${{ github.workspace }}/adamlui/autoclear-chatgpt-history/greasemonkey/ \
