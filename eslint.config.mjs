@@ -2,6 +2,7 @@ import js from '@eslint/js'
 import globals from 'globals'
 import json from '@eslint/json'
 import markdown from '@eslint/markdown'
+import pluginYaml from 'eslint-plugin-yaml'
 
 export default [
     ...markdown.configs.recommended,
@@ -31,5 +32,6 @@ export default [
             'markdown/heading-increment': 'off', // allow headings to skip levels
             'markdown/fenced-code-language': 'off' // allow code blocks w/ no language specified
         }
-    }
+    },
+    { files: ['**/*.yaml, **/*.yml'], ...pluginYaml.configs.recommended }
 ]
