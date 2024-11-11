@@ -5,7 +5,6 @@ import markdown from '@eslint/markdown'
 import pluginYaml from 'eslint-plugin-yaml'
 
 export default [
-    ...markdown.configs.recommended,
     {
         files: ['**/*.js', '**/*.mjs'], ...js.configs.recommended,
         rules: {
@@ -27,11 +26,12 @@ export default [
     { files: ['**/*.mjs'], languageOptions: { sourceType: 'module' }},
     { files: ['**/*.json'], ignores: ['**/package-lock.json'], language: 'json/json', ...json.configs.recommended },
     {
-        files: ['**/*.md'],
+        files: ['**/*.md'], language: 'markdown/commonmark', plugins: { markdown },
         rules: {
+            ...markdown.configs.recommended[0].rules,
             'markdown/heading-increment': 'off', // allow headings to skip levels
             'markdown/fenced-code-language': 'off' // allow code blocks w/ no language specified
         }
     },
-    { files: ['**/*.yaml, **/*.yml'], ...pluginYaml.configs.recommended }
+    { files: ['**/*.yaml, **/*.yml'], ...pluginYaml.configs.standard }
 ]
