@@ -3,7 +3,7 @@ name: Sync ** to adamlui/ai-apps/autoclear-chatgpt-history/, then greasemonkey/ 
 on:
   push:
     branches: [main]
-    paths: ["**", "!.*", "!package*json", "!eslint.config*"]
+    paths: ["**", "!.*", "!package*.json", "!eslint.config*"]
 
 jobs:
   build:
@@ -74,7 +74,7 @@ jobs:
 
       - name: Sync ** to adamlui/ai-apps/autoclear-chatgpt-history/
         run: |
-          rsync -avhr --delete --exclude={'.*','eslint*','package*json','requirements*txt'} \
+          rsync -avhr --delete --exclude={'.*','eslint*','package*.json','requirements*.txt'} \
             ${{ github.workspace }}/adamlui/autoclear-chatgpt-history/ \
             ${{ github.workspace }}/adamlui/ai-apps/autoclear-chatgpt-history/
 
