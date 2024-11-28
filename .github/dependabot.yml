@@ -16,7 +16,5 @@ updates:
     schedule:
       interval: daily
     groups:
-      prod-dependencies:
-        dependency-type: production
       dev-dependencies:
         dependency-type: development
