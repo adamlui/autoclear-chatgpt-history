@@ -2,14 +2,20 @@
 
 RED="\033[1;31m" ; NC="\033[0m"
 
-if npm ls -g eslint &> /dev/null || npm ls eslint &> /dev/null ; then
-    npm run lint
+# Run ESLint for JavaScript + JSON + Markdown + YAML
+echo -e "\nRunning ESLint..."
+npx eslint . --cache
+
+# Run Ruff for Python
+echo "Running Ruff..."
+if command -v ruff &> /dev/null ; then
+    ruff check .
 else
-    PROJECT_ROOT=$(
+    PROJECT_ROOT=$( # absolute path to echo on missing dependencies
         cd "$(dirname "$0")/.." && # nav to root
         [ "$OSTYPE" == "msys" ] && pwd -W || pwd # get absolute path
     )
-    echo -e "\n${RED}Warning: eslint not installed${NC}"
-    echo -e " To add missing dependencies, run 'npm install' from"
-    echo -e " $PROJECT_ROOT\n"
+    echo -e "\n${RED}Warning: Ruff not installed${NC}"
+    echo -e "To add missing Python dependencies, run 'pip install -r requirements-dev.txt' from"
+    echo -e "$PROJECT_ROOT\n"
 fi
