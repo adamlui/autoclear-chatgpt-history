@@ -14,7 +14,7 @@ echo -e "${BY}Running Ruff...${NC}"
 if command -v ruff &> /dev/null ; then
     ruff check .
 else
-    PROJECT_ROOT=$( # absolute path to echo on missing dependencies
+    PROJECT_ROOT=$(
         cd "$(dirname "$0")/.." && # nav to root
         [ "$OSTYPE" == "msys" ] && pwd -W || pwd # get absolute path
     )
