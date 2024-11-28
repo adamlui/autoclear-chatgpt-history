@@ -1,13 +1,16 @@
 #!/bin/bash
 
-RED="\033[1;31m" ; NC="\033[0m"
+# Init UI colors
+NC="\033[0m"    # no color
+BR="\033[1;91m" # bright red
+BY="\033[1;33m" # bright yellow
 
 # Run ESLint for JavaScript + JSON + Markdown + YAML
-echo -e "\nRunning ESLint..."
+echo -e "\n${BY}Running ESLint...${NC}"
 npx eslint . --cache
 
 # Run Ruff for Python
-echo "Running Ruff..."
+echo -e "${BY}Running Ruff...${NC}"
 if command -v ruff &> /dev/null ; then
     ruff check .
 else
@@ -15,7 +18,7 @@ else
         cd "$(dirname "$0")/.." && # nav to root
         [ "$OSTYPE" == "msys" ] && pwd -W || pwd # get absolute path
     )
-    echo -e "\n${RED}Warning: Ruff not installed${NC}"
+    echo -e "\n${BR}Warning: Ruff not installed${NC}"
     echo -e "To add missing Python dependencies, run 'pip install -r requirements-dev.txt' from"
     echo -e "$PROJECT_ROOT\n"
 fi
