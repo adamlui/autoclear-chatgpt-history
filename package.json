@@ -18,10 +18,10 @@
   ],
   "scripts": {
     "prepare": "husky",
-    "lint": "eslint . --cache && ruff check",
-    "lint:all": "eslint . && ruff check",
-    "lint:fix": "eslint . --fix --cache && ruff check --fix",
-    "lint:fix-all": "eslint . --fix && ruff check --fix"
+    "lint": "eslint . --cache",
+    "lint:all": "eslint .",
+    "lint:fix": "eslint . --fix --cache",
+    "lint:fix-all": "eslint . --fix"
   },
   "devDependencies": {
     "@eslint/json": "^0.8.0",
