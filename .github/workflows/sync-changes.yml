@@ -74,7 +74,7 @@ jobs:
 
       - name: Sync ** to adamlui/ai-apps/autoclear-chatgpt-history/
         run: |
-          rsync -avhr --delete --exclude={'.*'} \
+          rsync -avhr --delete --exclude={'.*','./*'} \
             ${{ github.workspace }}/adamlui/autoclear-chatgpt-history/ \
             ${{ github.workspace }}/adamlui/ai-apps/autoclear-chatgpt-history/
 
