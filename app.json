@@ -1,5 +1,5 @@
 {
-  "name": "Autoclear ChatGPT History", "symbol": "🕶️",
+  "name": "Autoclear ChatGPT History", "symbol": "🕶️", "cssPrefix": "autoclear-chatgpt-history",
   "author": { "name": "Adam Lui", "url": "https://github.com/adamlui" },
   "urls": {
     "chatgptJS": "https://chatgpt.js.org",
