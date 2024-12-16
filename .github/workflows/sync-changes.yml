@@ -3,7 +3,7 @@ name: Sync ** to adamlui/ai-apps/autoclear-chatgpt-history/, then greasemonkey/ 
 on:
   push:
     branches: [main]
-    paths: ["**", "!.*", "!package*.json", "!eslint.config*"]
+    paths: ["**", "!.*"]
 
 jobs:
   build:
