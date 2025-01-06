@@ -12,7 +12,7 @@
     },
     "gitHub": "https://github.com/adamlui/autoclear-chatgpt-history",
     "greasyFork": "https://greasyfork.org/scripts/460805-autoclear-chatgpt-history",
-    "mediaHost": "https://assets.autoclearchatgpt.com",
+    "assetHost": "https://assets.autoclearchatgpt.com",
     "relatedExtensions": "https://aiwebextensions.com",
     "review": { "greasyFork": "https://greasyfork.org/scripts/460805-autoclear-chatgpt-history/feedback#post-discussion" },
     "support": "https://support.autoclearchatgpt.com"
