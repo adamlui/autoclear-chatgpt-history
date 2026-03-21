@@ -1,62 +1,96 @@
 '''
-Script:       translate-en-messages.py
-Version:      2026.1.18
-Description:  Translate msg's from en/messages.json to [[output_langs]/messages.json]
+Name:         translate-en-messages.py
+Version:      2026.2.10.27
 Author:       Adam Lui
+Description:  Translate en/messages.json to other locales
 Homepage:     https://github.com/adamlui/python-utils
+Support:      https://github.com/adamlui/python-utils/issues
+Sponsor:      https://github.com/sponsors/adamlui
+Notes:        Use --help to print CLI arguments.
 '''
 
-import os, json
-from sys import stdout # for dynamic prints
+import argparse, os, json
+import lib.init as init
+from sys import stdout
 from translate import Translator
+from urllib.request import urlopen
 
-locales_folder = '_locales' ; provider = ''
-target_langs = [
-    'af', 'am', 'ar', 'az', 'be', 'bem', 'bg', 'bn', 'bo', 'bs', 'ca', 'ceb', 'cs', 'cy', 'da', 'de', 'dv', 'dz', 'el',
-    'en', 'en-GB', 'eo', 'es', 'et', 'eu', 'fa', 'fi', 'fo', 'fr', 'gd', 'gl', 'gu', 'haw', 'he', 'hi', 'hr', 'ht',
-    'hu', 'hy', 'id', 'is', 'it', 'ja', 'ka', 'kab', 'kk', 'km', 'kn', 'ko', 'ku', 'ky', 'la', 'lb', 'lo', 'lt', 'lv',
-    'mg', 'mi', 'mk', 'ml', 'mn', 'ms', 'mt', 'my', 'ne', 'nl', 'no', 'ny', 'pa', 'pap', 'pl', 'ps', 'pt', 'ro', 'ru',
-    'rw', 'sg', 'si', 'sk', 'sl', 'sm', 'sn', 'so', 'sr', 'sv', 'sw', 'ta', 'te', 'tg', 'th', 'ti', 'tk', 'tn', 'tpi',
-    'tr', 'uk', 'ur', 'uz', 'vi', 'xh', 'yi', 'zh', 'zh-CN', 'zh-HK', 'zh-SG', 'zh-TW', 'zu'
-]
+cli = init.cli() ; init.configFile(cli, __file__)
+
+# Parse CLI args
+parser = argparse.ArgumentParser(description='Translate en/messages.json to other locales')
+parser.add_argument('--include-langs', type=str, help='Languages to include (e.g. "en,es,fr")')
+parser.add_argument('--exclude-langs', type=str, help='Languages to exclude (e.g. "en,es")')
+parser.add_argument('--ignore-keys', type=str, help='Keys to ignore (e.g. "appName,author")')
+parser.add_argument('--locales-dir', type=str, help='Name of folder containing locales')
+parser.add_argument('--provider', type=str, help='Name of provider to use for translation')
+parser.add_argument('--init', action='store_true', help='Create .config.json file to store defaults')
+args = parser.parse_args()
+locales_dir = args.locales_dir or cli.config_data.get('locales_dir', '') or '_locales'
+provider = args.provider or cli.config_data.get('provider', '')
+
+if args.init: # create config file
+    if os.path.exists(cli.config_path):
+        print(f'Config already exists at {cli.config_path}')
+    else:
+        try:  # try to fetch template from jsDelivr
+            jsd_url = f'{cli.urls.jsdelivr}/{cli.name}/{cli.config_filename}'
+            with urlopen(jsd_url) as resp:
+                if resp.status == 200 : cli.config_data = json.loads(resp.read().decode('utf-8'))
+        except Exception : pass
+        with open(cli.config_path, 'w', encoding='utf-8') as configFile:
+            json.dump(cli.config_data, configFile, indent=2)
+        print(f'Default config created at {cli.config_path}')
+    exit()
+
+# Init target_locales
+def parse_csv_val(val) : return [item.strip() for item in val.split(',') if item.strip()]
+include_arg = args.include_langs or cli.config_data.get('include_langs', '')
+exclude_arg = args.exclude_langs or cli.config_data.get('exclude_langs', '')
+target_locales = parse_csv_val(include_arg) or cli.default_target_locales
+exclude_langs = set(parse_csv_val(exclude_arg))
+target_locales = [lang for lang in target_locales if lang not in exclude_langs]
 
 # UI initializations
-terminal_width = os.get_terminal_size()[0]
+try:
+    terminal_width = os.get_terminal_size()[0]
+except OSError:
+    terminal_width = 80
 def print_trunc(msg, end='\n'):
     truncated_lines = [
-        line if len(line) < terminal_width else line[:terminal_width - 4] + '...' for line in msg.splitlines() ]
+        line if len(line) < terminal_width else line[:terminal_width -4] + '...' for line in msg.splitlines() ]
     print('\n'.join(truncated_lines), end=end)
 def overwrite_print(msg) : stdout.write('\r' + msg.ljust(terminal_width)[:terminal_width])
 
 print('')
 
 # Prompt user for keys to ignore
-keys_to_ignore = []
+ignore_keys = parse_csv_val(args.ignore_keys or cli.config_data.get('ignore_keys', ''))
 while True:
+    if ignore_keys : print('Ignored key(s):', ignore_keys)
     key = input('Enter key to ignore (or ENTER if done): ')
     if not key : break
-    keys_to_ignore.append(key)
+    ignore_keys.append(key)
 
 # Determine closest locales dir
-print_trunc(f'\nSearching for { locales_folder }...')
+print_trunc(f'\nSearching for { locales_dir }...')
 script_dir = os.path.abspath(os.path.dirname(__file__))
-locales_dir = None
 for root, dirs, files in os.walk(script_dir): # search script dir recursively
-    if locales_folder in dirs:
-        locales_dir = os.path.join(root, locales_folder) ; break
+    if locales_dir in dirs:
+        locales_dir = os.path.join(root, locales_dir) ; break
 else: # search script parent dirs recursively
     parent_dir = os.path.dirname(script_dir)
     while parent_dir and parent_dir != script_dir:
         for root, dirs, files in os.walk(parent_dir):
-            if locales_folder in dirs:
-                locales_dir = os.path.join(root, locales_folder) ; break
+            if locales_dir in dirs:
+                locales_dir = os.path.join(root, locales_dir) ; break
         if locales_dir : break
         parent_dir = os.path.dirname(parent_dir)
     else : locales_dir = None
 
 # Print result
 if locales_dir : print_trunc(f'_locales directory found!\n\n>> { locales_dir }\n')
-else : print_trunc(f'Unable to locate a { locales_folder } directory.') ; exit()
+else : print_trunc(f'Unable to locate a { locales_dir } directory.') ; exit()
 
 # Load en/messages.json
 msgs_filename = 'messages.json'
@@ -64,8 +98,8 @@ en_msgs_path = os.path.join(locales_dir, 'en', msgs_filename)
 with open(en_msgs_path, 'r', encoding='utf-8') as en_file:
     en_messages = json.load(en_file)
 
-# Combine [target_langs] w/ languages discovered in _locales
-output_langs = list(set(target_langs)) # remove duplicates
+# Combine [target_locales] w/ languages discovered in _locales
+output_langs = list(set(target_locales)) # remove duplicates
 for root, dirs, files in os.walk(locales_dir):
     for folder in dirs:
         folder_path = os.path.join(root, folder)
@@ -105,14 +139,14 @@ for lang_code in output_langs:
     en_keys = list(en_messages.keys())
     fail_flags = ['INVALID TARGET LANGUAGE', 'TOO MANY REQUESTS', 'MYMEMORY']
     for key in en_keys:
-        if key in keys_to_ignore:
+        if key in ignore_keys:
             translated_msg = en_messages[key]['message']
             translated_msgs[key] = { 'message': translated_msg }
             continue
         if key not in messages:
             original_msg = translated_msg = en_messages[key]['message']
             try:
-                translator = Translator(provider=provider if provider else '', to_lang=lang_code)
+                translator = Translator(provider=provider, to_lang=lang_code)
                 translated_msg = translator.translate(original_msg).replace('&quot;', "'").replace('&#39;', "'")
                 if any(flag in translated_msg for flag in fail_flags):
                     translated_msg = original_msg
@@ -128,7 +162,7 @@ for lang_code in output_langs:
         formatted_msg = json.dumps(message_data, ensure_ascii=False) \
                             .replace('{', '{ ').replace('}', ' }') # add spacing
         formatted_msgs += ( f'  "{key}": {formatted_msg}'
-                        + ( ',\n' if idx < len(translated_msgs) - 1 else '\n' )) # terminate line
+                        + ( ',\n' if idx < len(translated_msgs) -1 else '\n' )) # terminate line
     formatted_msgs += '}'
     with open(msgs_path, 'w', encoding='utf-8') as output_file : output_file.write(formatted_msgs + '\n')
 
